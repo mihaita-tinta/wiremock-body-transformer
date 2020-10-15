@@ -197,15 +197,20 @@ public class ThymeleafBodyTransformer extends ResponseDefinitionTransformer {
         context.setVariable("counter", counter);
         context.setVariable("http", http);
 
+
         StringWriter stringWriter = new StringWriter();
         try {
             if (isDebugOn) {
-                System.out.println("transformResponse - response: " + response + ", requestObjects: " + Arrays.toString(requestObjects.entrySet().toArray()));
+                System.out.println("transformResponse - response old: " + response + ", requestObjects: " + Arrays.toString(requestObjects.entrySet().toArray()));
             }
             templateEngine.process(response, context, stringWriter);
         } catch (RuntimeException ex) {
             ex.printStackTrace();
             throw ex;
+        }
+
+        if (isDebugOn) {
+            System.out.println("transformResponse - response new: " + stringWriter.toString());
         }
 
         return stringWriter.toString();
@@ -314,10 +319,6 @@ public class ThymeleafBodyTransformer extends ResponseDefinitionTransformer {
             try {
 
                 JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);
-                if (printClaims) {
-                    jwtClaims.getClaimNames()
-                        .forEach(name -> System.out.println("accessToken - claim " + name + ": " + jwtClaims.getClaimValue(name)));
-                }
                 return jwtClaims;
             } catch (Exception e) {
                 e.printStackTrace();

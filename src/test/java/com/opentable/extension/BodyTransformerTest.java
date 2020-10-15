@@ -599,6 +599,27 @@ public class BodyTransformerTest {
     }
 
     @Test
+    public void returnPersonFromJwt() {
+        wireMockRule.stubFor(post(urlMatching("/test/step1"))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("content-type", "application/json")
+                .withBody("{\"var\":\"[(${utils.accessToken(xjwt, true).getClaimValue('exe').get('person')})]\"}")
+                .withTransformers("thymeleaf-body-transformer")));
+
+
+        given()
+            .contentType("application/json")
+            .header("x-jwt", "eyJhbGciOiJSUzI1NiIsIng1dCI6IjNCODYwQTU4QzNGODFFMkQ2OTk5QTVDQTExNjI5MTE0QjRBMjkzMDUifQ.eyJjaWQiOiI4NmVjZDFjNi1jN2RlLTRhN2MtYWE3Ni0yMDg1MDcwY2UxODkiLCJza3kiOiJkNThhNGVkMWJjODJmMWUzNzA4YmRhYzQ2YTU2M2RiNDk5NWFiZTVlYTg1MGJjYzBhNzQxMmE0NmYwOGU1MTQ5IiwidHJjIjp0cnVlLCJzY29wZSI6IiIsImV4ZSI6eyJwZXJzb24iOiI4YWVlYjkyNS01YTJmLTRlNzQtOGY5Zi1lMmNhZjIyZTlmMzYiLCJwcm9maWxlIjoiZTU5MjhhYjEtNzliNS00OGExLWJhZGUtM2ZmZjYzOWFjODI3IiwibWVhbnMiOlt7InR5cCI6Im1iLWlkZW50aWZpY2F0aW9uIn1dLCJsb2EiOjUsInR5cCI6ImN1c3RvbWVyIn0sInB0eSI6ImNvb2tpZSIsInB2ZSI6IkladnpTcXBVMHAxWEpYajZkemkzMnhtVm4iLCJzaWQiOiJlZDJkOGQyNy1jNDI4LTQzZDQtODJlMi0yN2Q1Nzg2ZjBkZDYiLCJ2ZXIiOiIxLjMiLCJqdGkiOiIxMDg1ZGUyNS0yMjM1LTRhZGYtODhjZi0zMmY0NjkyMDVjZjciLCJ0eXAiOiJhY2Nlc3MiLCJleHAiOjE1ODkxOTk5MzAsIm5iZiI6MTU4ODU5OTkzMCwiaWF0IjoxNTg4NTk5OTMwLCJpc3MiOiJUb2tlbkFQSSJ9.CT-zYOiHdejfO8uEnAK114S4p-0oYBEcqcI90txZety4tzYan2ecLLn9WES38DrPKKbvFKS_aIFaOmtHaMogXv4FvP5Y2ECNK9VtXMp6qM_oYVTLvgKHVunLhdN9f01YzCgmb3L99XNH7DQ_3udu1_udoaVhmdInI69B88tU9dfl4W4zRsD1CtbwJrmGSHnfyfUJ85IoMxoGB1cMHUxHJvrzuXUSQFkhYWn04cHF90F_rYNMntSLpIAhGBpnnu8K9Wk0vMxsCCqybJxOYHvK1_U5fE2bMgg9MV0FrY8dPkIbFoS146MNlUDqMvgqFlNqDlEcF_GyMGVCIyBNpc340Q")
+            .post("/test/step1")
+            .then()
+            .statusCode(200)
+            .body("var", equalTo("8aeeb925-5a2f-4e74-8f9f-e2caf22e9f36"));
+
+
+    }
+
+    @Test
     public void formatDate() {
         wireMockRule.stubFor(post(urlMatching("/test/step1"))
             .willReturn(aResponse()
